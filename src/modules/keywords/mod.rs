@@ -26,7 +26,7 @@ fn get_all_markdown<T: Into<PathBuf>>(
         let file = entry.expect("Failed to read file");
         let ftype = file.file_type().expect("Failed to extract file_type");
         // if the file is a directory and is not in our hashset...
-        if ftype.is_dir() && !ignore_dir.contains(file.path().as_path()) {
+        if ftype.is_dir() && !ignore_dir.contains(&file.path()) {
             let recursive_md = get_all_markdown(Some(file.path()), ignore_dir);
             // concatenate the files
             for i in recursive_md {
@@ -39,7 +39,7 @@ fn get_all_markdown<T: Into<PathBuf>>(
                 .path()
                 .extension()
                 .is_some_and(|x| x == OsStr::new("md"))
-            && !ignore_dir.contains(file.path().as_path())
+            && !ignore_dir.contains(&file.path())
         {
             md_files.push(file.path());
         }
