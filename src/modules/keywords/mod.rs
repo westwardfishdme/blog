@@ -14,6 +14,7 @@ fn get_all_markdown<T: Into<PathBuf>>(
 ) -> Vec<PathBuf> {
     //! recursive search in directories within the pwd for all files with the extension 'md'
     let mut md_files: Vec<PathBuf> = Vec::new();
+    // use pwd if no directory is given as a parameter.
     let dir = match directory {
         Some(dir) => std::fs::read_dir(dir.into()).expect("failed to read the directory"),
         None => {
@@ -21,11 +22,9 @@ fn get_all_markdown<T: Into<PathBuf>>(
             std::fs::read_dir(cwd).expect("failed to read the directory")
         }
     };
-
     for entry in dir.into_iter() {
         let file = entry.expect("Failed to read file");
         let ftype = file.file_type().expect("Failed to extract file_type");
-
         // if the file is a directory and is not in our hashset...
         if ftype.is_dir() && !ignore_dir.contains(file.path().as_path()) {
             let recursive_md = get_all_markdown(Some(file.path()), ignore_dir);
@@ -34,6 +33,7 @@ fn get_all_markdown<T: Into<PathBuf>>(
                 md_files.push(i);
             }
         }
+        // otherwise if it's a file, we just push it directly to our vec of .md files
         if ftype.is_file()
             && file
                 .path()
@@ -44,7 +44,6 @@ fn get_all_markdown<T: Into<PathBuf>>(
             md_files.push(file.path());
         }
     }
-
     md_files
 }
 pub fn format_md(keywords: HashMap<String, u64>) {
