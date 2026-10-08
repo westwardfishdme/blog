@@ -17,7 +17,7 @@ fn get_all_markdown<T: Into<PathBuf>>(
     let dir = match directory {
         Some(dir) => std::fs::read_dir(dir.into()).expect("failed to read the directory"),
         None => {
-            let cwd = std::env::current_dir().expect("Failed to read the current directory");
+            let cwd = std::env::current_dir().expect("failed to get the env for $PWD");
             std::fs::read_dir(cwd).expect("failed to read the directory")
         }
     };
