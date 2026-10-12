@@ -1,18 +1,18 @@
-/// Note creator.
-/// usage:
 mod args;
-use std::collections::HashSet;
-use std::error::Error;
-use std::fs::canonicalize;
-use std::path::PathBuf;
+use std::{
+    collections::HashSet,
+    env,
+    error::Error,
+    ffi::OsString,
+    fs,
+    path::PathBuf,
+    process::{Command, Stdio, exit},
+};
 
 use args::{Commands, NoteArgs};
 use clap::Parser;
 mod modules;
 use modules::{keywords, new};
-use std::env;
-use std::ffi::OsString;
-use std::process::{Command, Stdio, exit};
 
 #[cfg(target_os = "windows")]
 fn edit_file<T: ToString>(file: T) -> Result<(), Box<dyn Error>> {
@@ -88,7 +88,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     let mut idirs = HashSet::new();
 
                     for dir in dirs {
-                        let dir = canonicalize(dir)?;
+                        let dir = fs::canonicalize(dir)?;
                         idirs.insert(dir);
                     }
                     idirs
