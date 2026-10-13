@@ -14,6 +14,8 @@ use clap::Parser;
 mod modules;
 use modules::{keywords, new};
 
+/* --edit command calls */
+
 #[cfg(target_os = "windows")]
 fn edit_file<T: ToString>(file: T) -> Result<(), Box<dyn Error>> {
     //! edit the file for windows
@@ -83,6 +85,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         }
         Commands::Keywords(keywordargs) => {
+            // if we have a set of paths that we need to ignore
+            // we add them to a hashset that lets the program know
+            // that we don't want to search recursively in these
+            // particular paths.
             let ignore_dirs: HashSet<PathBuf> = match keywordargs.ignore_paths {
                 Some(dirs) => {
                     let mut idirs = HashSet::new();
@@ -102,7 +108,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 exit(1)
             }
             match keywordargs.output.to_lowercase().as_str() {
+                // print a markdown table
                 "markdown" | "md" => keywords::format_md(keywords),
+                // print a csv table
                 "csv" => keywords::format_csv(keywords),
                 _ => return Err("Bad file type, please choose from 'markdown' or 'csv'".into()),
             }
